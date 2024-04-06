@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState ,useEffect } from "react";
+import AddTodo from "./components/AddTodo";
+import TodoItem from "./components/TodoItem";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+{/*} {*/}
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+let id = 1;
 
-export default App
+
+const App = () => {
+  const [todos, setTodos] = useState([]);  {/*}set default todos to be empty list {*/}
+  const [display, setDisplay] = useState(true); {/*}set default display to be true {*/}
+  const [edit, setEdit] = useState({});
+
+ 
+  
+  useEffect(() => {
+    console.log(todos);
+  }, [todos]);
+
+
+  const addTodo = (todo) => {
+
+    if(!todo){
+
+      return;
+    }
+
+    const data = {
+      name : todo,
+      id : id
+
+    }
+
+    id += 1;
+
+    const newTodos = [...todos, data];
+
+    setTodos(newTodos);
+  };
+
+  const deleteTodo = (id) => {
+    const newTodos = todos.filter((todo) => todo.id !== id);
+
+
+    setTodos(newTodos);
+  };
+
+  const editTodo = (id) =>{
+    const edit = todos.find((todo) => todo.id === id);
+    setEdit(edit);
+    setDisplay(!display);
+  }
+
+
+  const handleEditTodo =  (input, id) => {
+
+    setTodos((prev)=> prev.map((todo) => todo.id === id ? {name : input , id : id} : todo));
+    setDisplay(!display);
+    setEdit(null);
+  }
+
+
+
+  return <div className="container">
+    <h1>Todo List </h1>
+    <AddTodo handleEditTodo={handleEditTodo} handleAddTodo={addTodo} edit={edit} display={display}/>
+    {
+      display &&
+      <TodoItem todos={todos} deleteTodo={deleteTodo} editTodo={editTodo}/>
+    }
+  </div>;
+};
+
+export default App;
